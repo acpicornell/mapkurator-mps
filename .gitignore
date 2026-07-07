@@ -1,0 +1,20 @@
+# Model weights — fetched on demand, never committed (see NOTICE)
+weights/
+
+# Developer-only writable checkout (see scripts/vendor-dev.sh)
+vendor/
+
+# Local inputs/outputs when testing
+in/
+out/
+
+# Nix build symlink
+result
+
+# Python / macOS
+__pycache__/
+*.pyc
+.DS_Store
+
+# direnv
+.direnv/

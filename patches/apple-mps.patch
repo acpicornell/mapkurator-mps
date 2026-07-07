@@ -1,0 +1,65 @@
+diff --git a/spotter-v2/adet/layers/ms_deform_attn.py b/spotter-v2/adet/layers/ms_deform_attn.py
+index 0c7cf1e..957fd94 100755
+--- a/spotter-v2/adet/layers/ms_deform_attn.py
++++ b/spotter-v2/adet/layers/ms_deform_attn.py
+@@ -14,7 +14,16 @@ import torch.nn.functional as F
+ from torch.nn.init import xavier_uniform_, constant_
+ from torch.autograd.function import once_differentiable
+ 
+-from adet import _C
++# The custom `adet._C` CUDA op is optional. On Apple Silicon (CPU / MPS) it is
++# not built; we fall back to the pure-PyTorch reference implementation below,
++# which is numerically equivalent. See ms_deform_attn_core_pytorch().
++try:
++    from adet import _C
++    _HAS_ADET_C = True
++except ImportError:
++    _C = None
++    _HAS_ADET_C = False
++
+ 
+ class _MSDeformAttnFunction(torch.autograd.Function):
+     @staticmethod
+@@ -152,7 +161,15 @@ class MSDeformAttn(nn.Module):
+             raise ValueError(
+                 'Last dim of reference_points must be 2 or 4, but get {} instead.'.format(reference_points.shape[-1]))
+                 
+-        output = _MSDeformAttnFunction.apply(
+-            value, input_spatial_shapes, input_level_start_index, sampling_locations, attention_weights, self.im2col_step)
++        if _HAS_ADET_C and value.is_cuda:
++            output = _MSDeformAttnFunction.apply(
++                value, input_spatial_shapes, input_level_start_index, sampling_locations, attention_weights, self.im2col_step)
++        else:
++            # CPU / MPS path: the compiled CUDA op is unavailable, so use the
++            # numerically equivalent pure-PyTorch reference (grid_sample based).
++            # input_spatial_shapes is kept on CPU as python ints for the split.
++            spatial_shapes = [(int(H), int(W)) for H, W in input_spatial_shapes.tolist()]
++            output = ms_deform_attn_core_pytorch(
++                value, spatial_shapes, sampling_locations, attention_weights)
+         output = self.output_proj(output)
+         return output
+diff --git a/spotter-v2/adet/layers/pos_encoding.py b/spotter-v2/adet/layers/pos_encoding.py
+index 5448205..690278b 100755
+--- a/spotter-v2/adet/layers/pos_encoding.py
++++ b/spotter-v2/adet/layers/pos_encoding.py
+@@ -27,8 +27,10 @@ class PositionalEncoding1D(nn.Module):
+         if tensor.ndim != 2:
+             raise RuntimeError("The input tensor has to be 2D!")
+         x, orig_ch = tensor.shape
++        # Use .to(dtype) rather than the legacy .type(<string>) API, which
++        # raises on the MPS backend ('torch.mps.FloatTensor' is not accepted).
+         pos_x = torch.arange(
+-            1, x + 1, device=tensor.device).type(self.inv_freq.type())
++            1, x + 1, device=tensor.device).to(self.inv_freq.dtype)
+ 
+         if self.normalize:
+             eps = 1e-6
+@@ -37,7 +39,7 @@ class PositionalEncoding1D(nn.Module):
+         sin_inp_x = torch.einsum("i,j->ij", pos_x, self.inv_freq)
+         emb_x = torch.cat((sin_inp_x.sin(), sin_inp_x.cos()), dim=-1)
+         emb = torch.zeros((x, self.channels),
+-                          device=tensor.device).type(tensor.type())
++                          device=tensor.device).to(tensor.dtype)
+         emb[:, :self.channels] = emb_x
+ 
+         return emb[:, :orig_ch]

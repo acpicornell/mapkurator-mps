@@ -1,0 +1,63 @@
+{
+  "nodes": {
+    "mapkurator-spotter": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1719513987,
+        "narHash": "sha256-lvO/IaFCifxAnq1iU2ng2fR2PMsuM9hJT1xMtgFgRQU=",
+        "owner": "knowledge-computing",
+        "repo": "mapkurator-spotter",
+        "rev": "4686d2e666f923303a4c8c9a609a77e1ac57234c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "knowledge-computing",
+        "repo": "mapkurator-spotter",
+        "rev": "4686d2e666f923303a4c8c9a609a77e1ac57234c",
+        "type": "github"
+      }
+    },
+    "mapkurator-system": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1751912149,
+        "narHash": "sha256-UIV6YL4JkY+PyB1Nt26coN9ZX+BG5UbkAwVe3C8gPDw=",
+        "owner": "knowledge-computing",
+        "repo": "mapkurator-system",
+        "rev": "5b765d99c4898ce07654d904b6f3b608b9e76189",
+        "type": "github"
+      },
+      "original": {
+        "owner": "knowledge-computing",
+        "repo": "mapkurator-system",
+        "rev": "5b765d99c4898ce07654d904b6f3b608b9e76189",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1783279667,
+        "narHash": "sha256-/NAkDSsve+GNM0Bt6tleJdCGfsTlK89nPjkVOzZMo0s=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f205b5574fd0cb7da5b702a2da51507b7f4fdd1b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "mapkurator-spotter": "mapkurator-spotter",
+        "mapkurator-system": "mapkurator-system",
+        "nixpkgs": "nixpkgs"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

@@ -1,0 +1,40 @@
+mapkurator-spotter-mps
+=======================
+
+This project is an Apple Silicon (MPS/CPU) port of the mapKurator "spotter-v2"
+text spotter. It contains original packaging (a Nix flake and CLI wrapper) plus
+a small source patch; it does NOT vendor or redistribute the upstream code or
+model weights — those are fetched from their original locations at build/run
+time.
+
+Upstream source
+---------------
+mapkurator-spotter (spotter-v2)
+  https://github.com/knowledge-computing/mapkurator-spotter
+  Pinned commit: 4686d2e666f923303a4c8c9a609a77e1ac57234c
+  License: Creative Commons Attribution-NonCommercial 2.0 (CC BY-NC 2.0)
+
+Because the upstream is CC BY-NC 2.0, this derivative work (including
+patches/apple-mps.patch) is likewise for NON-COMMERCIAL use and must retain
+attribution to the mapKurator / Knowledge Computing Lab authors.
+
+spotter-v2 in turn builds on, and includes code from:
+  - Deformable-DETR   (c) 2020 SenseTime — Apache License 2.0
+  - AdelaiDet / Detectron2 — Apache License 2.0
+  - TESTR (Deformable-DETR text spotter)
+
+Model weights
+-------------
+The spotter checkpoints (e.g. model_v2_en.pth) are published by the upstream
+authors on Google Drive and are governed by the upstream license and the
+per-model model cards. They are NOT included here. Use scripts/get-weights.sh to
+download them for non-commercial use.
+
+What this repository adds
+-------------------------
+  - patches/apple-mps.patch — routes multi-scale deformable attention through
+    the pure-PyTorch reference (no compiled CUDA op) and replaces the legacy
+    Tensor.type(<string>) API with .to(dtype) so the model runs on the MPS
+    backend. This is the port.
+  - flake.nix — reproducible Nix packaging and a `mapkurator-spotter` CLI.
+  - scripts/ — weight download and a developer checkout helper.
