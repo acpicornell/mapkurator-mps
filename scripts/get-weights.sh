@@ -29,4 +29,4 @@ fi
 
 echo "Downloading spotter-v2 English weights to ${DEST} ..."
 gdown "https://drive.google.com/uc?id=${FILE_ID}" -O "${DEST}"
-echo "Done. Point the CLI at it:  mapkurator-spotter --weights ${DEST} ..."
+echo "Done. Point the CLI at it:  mapkurator-mps --weights ${DEST} ..."

@@ -1,5 +1,5 @@
 {
-  description = "Apple Silicon (MPS/CPU) port of the mapKurator spotter-v2 text spotter — no CUDA required";
+  description = "Apple Silicon (MPS/CPU) port of the mapKurator extraction pipeline (crop → spotter-v2 → stitch) — no CUDA required";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -61,12 +61,12 @@
       # Upstream source with the Apple/MPS patch applied — reproducible, no
       # mutable checkout. This IS the port.
       mkPatchedSrc = pkgs: pkgs.applyPatches {
-        name = "mapkurator-spotter-mps-src";
+        name = "mapkurator-mps-src";
         src = mapkurator-spotter;
         patches = [ ./patches/apple-mps.patch ];
       };
 
-      mkSpotter = pkgs:
+      mkPipeline = pkgs:
         let
           pyEnv = mkPyEnv pkgs;
           patchedSrc = mkPatchedSrc pkgs;
@@ -74,7 +74,7 @@
           defaultDevice = if pkgs.stdenv.isDarwin then "mps" else "cpu";
         in
         pkgs.writeShellApplication {
-          name = "mapkurator-spotter";
+          name = "mapkurator-mps";
           runtimeInputs = [ pyEnv ];
           text = ''
             # Any op missing on the MPS backend falls back to CPU rather than erroring.
@@ -95,10 +95,10 @@
 
             usage() {
               cat <<'EOF'
-            mapkurator-spotter — Apple/MPS port of the mapKurator spotter-v2
+            mapkurator-mps — Apple/MPS port of the mapKurator extraction pipeline
 
             Usage:
-              mapkurator-spotter --input PATH --output DIR --weights model.pth [options]
+              mapkurator-mps --input PATH --output DIR --weights model.pth [options]
 
             Two input modes (auto-detected):
               --input IMAGE  End-to-end: crop (M1) → spot (M2) → stitch (M3),
@@ -190,8 +190,8 @@
       packages = forAllSystems (system:
         let pkgs = import nixpkgs { inherit system; }; in
         {
-          default = mkSpotter pkgs;
-          spotter = mkSpotter pkgs;
+          default = mkPipeline pkgs;
+          pipeline = mkPipeline pkgs;
           # The patched source tree on its own, for inspection / downstream use.
           src = mkPatchedSrc pkgs;
         });
@@ -199,9 +199,9 @@
       apps = forAllSystems (system: {
         default = {
           type = "app";
-          program = "${self.packages.${system}.spotter}/bin/mapkurator-spotter";
+          program = "${self.packages.${system}.pipeline}/bin/mapkurator-mps";
         };
-        spotter = self.apps.${system}.default;
+        pipeline = self.apps.${system}.default;
       });
 
       devShells = forAllSystems (system:
@@ -215,7 +215,7 @@
             packages = [ pyEnv pkgs.git pkgs.python3Packages.gdown ];
             PYTORCH_ENABLE_MPS_FALLBACK = "1";
             shellHook = ''
-              echo "mapkurator-spotter-mps dev shell — $(python --version 2>&1)"
+              echo "mapkurator-mps dev shell — $(python --version 2>&1)"
               echo "Run: scripts/vendor-dev.sh   to get a writable checkout for editing the patch."
             '';
           };

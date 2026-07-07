@@ -1,8 +1,9 @@
-# mapkurator-spotter-mps
+# mapkurator-mps
 
-Run the [mapKurator **spotter-v2**](https://github.com/knowledge-computing/mapkurator-spotter)
-text spotter **natively on Apple Silicon** (Metal / MPS), with **no CUDA** and no
-NVIDIA GPU. Packaged as a reproducible Nix flake.
+Run the mapKurator **extraction pipeline** — crop a map into tiles, spot text with
+[**spotter-v2**](https://github.com/knowledge-computing/mapkurator-spotter), and
+stitch the detections into one GeoJSON — **natively on Apple Silicon** (Metal /
+MPS), with **no CUDA** and no NVIDIA GPU. Packaged as a reproducible Nix flake.
 
 The upstream spotter ships as a CUDA Docker image with a compiled custom op. On a
 Mac that is a dead end: Docker on macOS runs a Linux VM with **no access to

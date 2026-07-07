@@ -1,5 +1,5 @@
-mapkurator-spotter-mps
-=======================
+mapkurator-mps
+==============
 
 This project is an Apple Silicon (MPS/CPU) port of the mapKurator "spotter-v2"
 text spotter. It contains original packaging (a Nix flake and CLI wrapper) plus
@@ -36,5 +36,5 @@ What this repository adds
     the pure-PyTorch reference (no compiled CUDA op) and replaces the legacy
     Tensor.type(<string>) API with .to(dtype) so the model runs on the MPS
     backend. This is the port.
-  - flake.nix — reproducible Nix packaging and a `mapkurator-spotter` CLI.
+  - flake.nix — reproducible Nix packaging and a `mapkurator-mps` CLI.
   - scripts/ — weight download and a developer checkout helper.
