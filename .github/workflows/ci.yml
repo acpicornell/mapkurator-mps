@@ -1,0 +1,28 @@
+name: CI
+
+# Light validation: check that the flake evaluates and that the Apple/MPS
+# patch still applies cleanly against the pinned upstream source. This does
+# NOT build torch/detectron2 or run the spotter (which needs weights + a GPU);
+# it catches flake/eval/patch breakage, which is what CI can verify cheaply.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  flake:
+    # Apple Silicon runner — validates the aarch64-darwin target directly.
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Nix (flakes enabled)
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Flake evaluates
+        run: nix flake show
+
+      - name: MPS patch applies (builds the patched source, not torch)
+        run: nix build .#src -L

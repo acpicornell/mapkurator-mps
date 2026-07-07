@@ -1,5 +1,7 @@
 # mapkurator-mps
 
+[![CI](https://github.com/acpicornell/mapkurator-mps/actions/workflows/ci.yml/badge.svg)](https://github.com/acpicornell/mapkurator-mps/actions/workflows/ci.yml)
+
 Run the mapKurator **extraction pipeline** — crop a map into tiles, spot text with
 [**spotter-v2**](https://github.com/knowledge-computing/mapkurator-spotter), and
 stitch the detections into one GeoJSON — **natively on Apple Silicon** (Metal /
