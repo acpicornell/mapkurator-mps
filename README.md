@@ -13,6 +13,26 @@ Metal/MPS**, so a container can only ever use the CPU. This project takes the
 other route — a small source patch that removes the CUDA dependency, plus Nix
 packaging — so the model runs on the Apple GPU directly.
 
+## The mapKurator modules (M1–M6)
+
+The upstream [mapKurator system](https://github.com/knowledge-computing/mapkurator-system)
+is a pipeline of numbered modules. This project packages the first three — the
+part that turns a raw map image into detected, positioned text — and leaves the
+downstream georeferencing/linking modules out (they need external services and
+map-specific data, and belong in the project that consumes this one).
+
+| Module | What it does | Here? |
+|--------|--------------|-------|
+| **M1** | **Crop** a whole map image into fixed-size tiles | ✅ included (stock CPU) |
+| **M2** | **Spot** text on each tile — the `spotter-v2` detector/recognizer | ✅ included (**the ported module**) |
+| **M3** | **Stitch** per-tile detections back into one map-wide GeoJSON | ✅ included (stock CPU) |
+| **M4** | Post-OCR: correct readings against a gazetteer (needs Elasticsearch + an OSM vocabulary) | ❌ out of scope |
+| **M5** | Geocoordinate conversion: pixel → world coords (needs GDAL + per-map ground control points) | ❌ out of scope |
+| **M6** | Entity linking to a knowledge base (needs PostGIS + Elasticsearch) | ❌ out of scope |
+
+Only **M2** is GPU/CUDA-bound and needed porting; M1 and M3 are small, stock,
+CPU-only Python scripts used as-is.
+
 ## What the port actually is
 
 spotter-v2 is a Deformable-DETR + TESTR text spotter. Its only custom op is
@@ -66,12 +86,8 @@ The tool auto-detects the input:
 - **A directory of tiles** spots each tile and writes one JSON per tile into
   `--output`, with columns `polygon_x`, `polygon_y`, `text`, `score`.
 
-Only the GPU/CUDA-bound module (M2) needed porting; M1 and M3 are stock
-CPU-only Python. The heavier mapKurator modules — M4 post-OCR (needs
-Elasticsearch + an indexed OSM vocabulary), M5 geocoordinate conversion (GDAL +
-per-map ground control points), and M6 entity linking (PostGIS/Elasticsearch) —
-are intentionally **not** included: they require external services/data and
-belong in the georeferencing project that consumes this flake.
+(See [the module table](#the-mapkurator-modules-m1m6) above for what M1–M3 are
+and why M4–M6 are out of scope.)
 
 ### Options
 
