@@ -104,10 +104,25 @@ scripts/vendor-dev.sh                                   # writable checkout in .
 git -C vendor/mapkurator-spotter diff > patches/apple-mps.patch
 ```
 
+## Citation
+
+If you use this in academic work, cite the upstream mapKurator system:
+
+```bibtex
+@inproceedings{kim2023mapkurator,
+  title={The mapKurator System: A Complete Pipeline for Extracting and Linking Text from Historical Maps},
+  author={Kim, Jina and Li, Zekun and Lin, Yijun and Namgung, Min and Jang, Leeje and Chiang, Yao-Yi},
+  booktitle={Proceedings of the 31st ACM International Conference on Advances in Geographic Information Systems},
+  pages={1--4},
+  year={2023}
+}
+```
+
 ## License
 
-Derivative of `mapkurator-spotter`, which is **CC BY-NC 2.0**
-(Attribution-NonCommercial). This repository and its patch are therefore for
-**non-commercial** use and retain attribution to the upstream authors. See
-[`NOTICE`](./NOTICE) for full provenance and the licenses of bundled-by-reference
-components (Deformable-DETR and AdelaiDet/Detectron2 are Apache-2.0).
+**CC BY-NC 2.0** (Attribution-NonCommercial), matching the upstream
+`mapkurator-spotter` this derives from. This repository and its patch are
+therefore for **non-commercial** use and retain attribution to the upstream
+authors. See [`LICENSE`](./LICENSE) for terms and [`NOTICE`](./NOTICE) for full
+provenance and the licenses of bundled-by-reference components (Deformable-DETR
+and AdelaiDet/Detectron2 are Apache-2.0).

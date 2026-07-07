@@ -1,0 +1,29 @@
+CC BY-NC 2.0
+
+This work — mapkurator-mps, an Apple Silicon (MPS/CPU) port of the mapKurator
+"spotter-v2" text spotter — is licensed under the Creative Commons
+Attribution-NonCommercial 2.0 Generic (CC BY-NC 2.0) license, matching the
+license of the upstream mapKurator project it derives from.
+
+  Full license text: https://creativecommons.org/licenses/by-nc/2.0/legalcode
+  Human-readable summary: https://creativecommons.org/licenses/by-nc/2.0/
+
+You are free to share and adapt this work for NON-COMMERCIAL purposes, provided
+you give appropriate attribution to the upstream authors (see below and NOTICE).
+
+Attribution
+-----------
+Derived from the mapKurator system and spotter-v2 text spotter by the
+Knowledge Computing Lab:
+
+  Kim, Jina; Li, Zekun; Lin, Yijun; Namgung, Min; Jang, Leeje; Chiang, Yao-Yi.
+  "The mapKurator System: A Complete Pipeline for Extracting and Linking Text
+  from Historical Maps." Proceedings of the 31st ACM International Conference on
+  Advances in Geographic Information Systems (SIGSPATIAL), 2023.
+
+  https://github.com/knowledge-computing/mapkurator-spotter
+  https://github.com/knowledge-computing/mapkurator-system
+
+Components bundled by reference (fetched at build time, not vendored here) carry
+their own licenses — Deformable-DETR and AdelaiDet/Detectron2 are Apache-2.0.
+See NOTICE for full provenance.
