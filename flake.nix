@@ -157,7 +157,7 @@
             if [[ -d "$input" ]]; then
               # Tile-directory mode (original behavior): per-tile JSON in $output.
               mkdir -p "$output"
-              exec run_spotter "$input" "$output"
+              run_spotter "$input" "$output"
             elif [[ -f "$input" ]]; then
               # End-to-end mode: whole map image -> single GeoJSON.
               map_name="$(basename "$input")"; map_name="''${map_name%.*}"

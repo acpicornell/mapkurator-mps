@@ -63,3 +63,25 @@ index 5448205..690278b 100755
          emb[:, :self.channels] = emb_x
  
          return emb[:, :orig_ch]
+diff --git a/spotter-v2/adet/modeling/transformer_detector.py b/spotter-v2/adet/modeling/transformer_detector.py
+index 9814295..f3e6d7b 100644
+--- a/spotter-v2/adet/modeling/transformer_detector.py
++++ b/spotter-v2/adet/modeling/transformer_detector.py
+@@ -240,9 +240,14 @@ class TransformerDetector(nn.Module):
+                 result.polygons = ctrl_point_per_image.flatten(1)
+             else:
+                 result.beziers = ctrl_point_per_image.flatten(1)
+-            _, topi = text_per_image.topk(1)
+-            
+-            result.recs = topi.squeeze(-1)
++            if text_per_image.shape[0] == 0:
++                # No instances survived the score threshold. topk on an empty
++                # tensor broadcast-fails on the MPS/CPU backends.
++                result.recs = text_per_image.new_zeros(
++                    (0, text_per_image.shape[1]), dtype=torch.long)
++            else:
++                _, topi = text_per_image.topk(1)
++                result.recs = topi.squeeze(-1)
+             results.append(result)
+         
+             
